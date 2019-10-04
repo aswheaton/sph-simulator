@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from Particle import Particle
 
-def class SPH_Simulation(object):
+class SPH_Simulation(object):
     """docstring for SPH_Simulation."""
     def __init__(self, m_total, n_sph, boundary, timestep):
         # Store the initial parameters as class attributes.
@@ -97,9 +97,9 @@ def class SPH_Simulation(object):
     # Monaghan and Lattanzio (1985) spline smoothing kernel.
     def spline_kernel(r, h):
         q = r / h
-        if q >= 0.0 && q <= 1.0:
+        if q >= 0.0 and q <= 1.0:
             return((1.0/m.pi/h**2)*(1.0-1.5*q**2+0.75*q**3))
-        elif q >= 1.0 && q <=2.0:
+        elif q >= 1.0 and q <=2.0:
             return((1.0/4.0/m.pi/h**2)*(2.0-q)**3)
         elif q >=2:
             return(0.0)
