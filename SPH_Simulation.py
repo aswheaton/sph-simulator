@@ -24,10 +24,41 @@ def class SPH_Simulation(object):
 
     # Runs the simulation and animates it.
     def run(self):
-        while self.t <= self.t_max:
-            self.update_densities()
-            self.update_forces()
-            self.step_forward()
+        # Creates figure and axes elements. Scales and labels them appropriately.
+        self.figure = plt.figure()
+        self.axes = plt.axes()
+        self.axes.axis('scaled')
+        self.axes.set_xlim(0.0, self.boundary)
+        self.axes.set_ylim(0.0, self.boundary)
+        self.axes.set_xlabel('x-coordinate (m)')
+        self.axes.set_ylabel('y-coordinate (m)')
+
+        # Creates a list of circles to be plotted by pyplot and adds them to the axes.
+        self.patches = []
+
+        for i in range(self.n_sph):
+            # Syntax: plt.Circle((xpos,ypos), patch_size, color="string", animate=True)
+            self.patches.append(plt.Circle((self.particles[i].position), 1.0, color="blue", animated=True))
+        for i in range(self.n_sph):
+            self.axes.add_patch(self.patches[i])
+
+        # Animates the plot.
+        self.animation = FuncAnimation(self.figure, self.animate, frames=self.maxIterations, repeat=False, interval=20, blit=True)
+        # Show the plot.
+        plt.show()
+
+        # while self.t <= self.t_max:
+        #     self.update_densities()
+        #     self.update_forces()
+        #     self.step_forward()
+
+    def animate(self, i):
+        self.step_forward()
+        self.t += self.timestep
+        # Updates the position of each patch with the new simulation data.
+        for n in range(self.n_sph):
+            self.patches[n].center = (self.particles[n].position)
+        return(self.patches)
 
     # Updates the list of densities to reflect current particle positions.
     def update_densities(self):
