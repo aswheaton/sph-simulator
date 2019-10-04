@@ -6,7 +6,7 @@ def class SPH_Simulation(object):
     """docstring for SPH_Simulation."""
     def __init__(self, m_total, n_sph, boundary, timestep):
         # Store the initial parameters as class attributes.
-        self.m_total, self.sph, self.boundary = m_total, n_sph, boundary
+        self.m_total, self.sph, self.boundary, self.timestep = m_total, n_sph, boundary, timestep
         # Calculate and store the mass of a single particle.
         self.m_particle = m_total / n_sph
         # Initialize list of Particle objects.
@@ -17,14 +17,14 @@ def class SPH_Simulation(object):
         self.densities = []
         for i in range(n_sph):
             densities.append(get_density(self.particles[i].position))
-        # Initialize a list of net force on each particleself.
-        forces = []
+        # Initialize a list of net force on each particle.
+        self.forces = []
         for i in range(n_sph):
             forces.append(get_force(self.particles[i].position))
 
     # Runs the simulation and animates it.
     def run(self):
-        while t <= t_max:
+        while self.t <= self.t_max:
             self.update_densities()
             self.update_forces()
             self.step_forward()
@@ -41,6 +41,15 @@ def class SPH_Simulation(object):
             density += self.m_particle * kernel(separation, smoothing_length)
         return(density)
 
+    # Calculates and returns an adaptive smoothing length based on the density
+    # at the particle's position on the previous iteration. Hard coded to
+    # include approximately 50 neighboring particles inside the smoothing length.
+    # This is not ideally formulated, so will make more elegant later!
+    def get_smoothing_length(self, i):
+        density = self.densities[i]
+        smoothing_length = 50.0 * self.m_particle / 2.0 / density
+        return(smoothing_length)
+
     # Updates the list of force to reflect current particle positions.
     def update_forces(self):
         return()
@@ -48,7 +57,7 @@ def class SPH_Simulation(object):
     # Gets the net force on a particle at a position due to neighboring particles.
     def get_force(self, position):
         return(force)
-        
+
     # Gaussian smoothing kernel.
     def gaussian_kernel(r, h):
         q = r / h
